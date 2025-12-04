@@ -1,13 +1,13 @@
 import AWS from 'aws-sdk';
-import logger from './logger';
-import { DatabaseError } from './errors';
+import logger from '@logger';
+import { DatabaseError } from '@errors';
 
 const dynamodb = new AWS.DynamoDB.DocumentClient({
   region: process.env.AWS_REGION || 'us-east-1'
 });
 
 class DynamoDBConnection {
-  async get(params: AWS.DynamoDB.DocumentClient.GetInput): Promise<AWS.DynamoDB.DocumentClient.GetOutput> {
+  async get(params: any): Promise<any> {
     try {
       logger.debug('DynamoDB get operation', { table: params.TableName, key: params.Key });
       const result = await dynamodb.get(params).promise();
@@ -18,7 +18,7 @@ class DynamoDBConnection {
     }
   }
 
-  async put(params: AWS.DynamoDB.DocumentClient.PutInput): Promise<AWS.DynamoDB.DocumentClient.PutOutput> {
+  async put(params: any): Promise<any> {
     try {
       logger.debug('DynamoDB put operation', { table: params.TableName });
       const result = await dynamodb.put(params).promise();
@@ -29,7 +29,7 @@ class DynamoDBConnection {
     }
   }
 
-  async update(params: AWS.DynamoDB.DocumentClient.UpdateInput): Promise<AWS.DynamoDB.DocumentClient.UpdateOutput> {
+  async update(params: any): Promise<any> {
     try {
       logger.debug('DynamoDB update operation', { table: params.TableName });
       const result = await dynamodb.update(params).promise();
@@ -40,7 +40,7 @@ class DynamoDBConnection {
     }
   }
 
-  async delete(params: AWS.DynamoDB.DocumentClient.DeleteInput): Promise<AWS.DynamoDB.DocumentClient.DeleteOutput> {
+  async delete(params: any): Promise<any> {
     try {
       logger.debug('DynamoDB delete operation', { table: params.TableName });
       const result = await dynamodb.delete(params).promise();

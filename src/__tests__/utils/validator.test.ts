@@ -1,5 +1,4 @@
-import { Validator } from '../../utils/validator';
-import { ValidationError } from '../../errors';
+import { Validator } from '@utils/validator';
 import Joi from 'joi';
 
 describe('Validator', () => {
@@ -26,7 +25,15 @@ describe('Validator', () => {
 
       expect(() => {
         Validator.validateBody(schema, data);
-      }).toThrow(ValidationError);
+      }).toThrow();
+
+      // Also test the error properties
+      try {
+        Validator.validateBody(schema, data);
+      } catch (error: any) {
+        expect(error.errorCode).toBe('VALIDATION_ERROR');
+        expect(error.statusCode).toBe(400);
+      }
     });
 
     it('should throw ValidationError for missing required field', () => {
@@ -38,7 +45,15 @@ describe('Validator', () => {
 
       expect(() => {
         Validator.validateBody(schema, data);
-      }).toThrow(ValidationError);
+      }).toThrow();
+
+      // Also test the error properties
+      try {
+        Validator.validateBody(schema, data);
+      } catch (error: any) {
+        expect(error.errorCode).toBe('VALIDATION_ERROR');
+        expect(error.statusCode).toBe(400);
+      }
     });
 
     it('should strip unknown fields', () => {
@@ -57,8 +72,8 @@ describe('Validator', () => {
   describe('validateQuery', () => {
     it('should validate query parameters', () => {
       const schema = Joi.object({
-        page: Joi.number().default(1),
-        limit: Joi.number().default(10),
+        page: Joi.string().default('1'),
+        limit: Joi.string().default('10'),
       });
 
       const query = { page: '2', limit: '20' };

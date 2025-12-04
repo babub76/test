@@ -5,6 +5,14 @@
     "lib": ["ES2020"],
     "outDir": "./dist",
     "rootDir": "./src",
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+      "@errors": ["./errors"],
+      "@logger": ["./logger"],
+      "@database/*": ["./database/*"],
+      "@utils/*": ["./utils/*"]
+    },
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

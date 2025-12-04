@@ -1,6 +1,5 @@
-import dynamodbConnection from '../../database/dynamodb';
+import dynamodbConnection from '@database/dynamodb';
 import AWS from 'aws-sdk';
-import { DatabaseError } from '../../errors';
 
 jest.mock('aws-sdk');
 

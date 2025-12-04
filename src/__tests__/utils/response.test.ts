@@ -1,5 +1,5 @@
-import { ResponseHandler } from '../../utils/response';
-import { ValidationError, InternalServerError } from '../../errors';
+import { ResponseHandler } from '@utils/response';
+import { ValidationError } from '@errors';
 
 describe('ResponseHandler', () => {
   describe('success', () => {
@@ -8,7 +8,7 @@ describe('ResponseHandler', () => {
       const response = ResponseHandler.success(data, 200);
 
       expect(response.statusCode).toBe(200);
-      expect(response.headers['Content-Type']).toBe('application/json');
+      expect(response.headers!['Content-Type']).toBe('application/json');
 
       const body = JSON.parse(response.body);
       expect(body.success).toBe(true);
@@ -61,7 +61,7 @@ describe('ResponseHandler', () => {
       const error = new Error('Test error');
       const response = ResponseHandler.error(error, 'req-123');
 
-      expect(response.headers['Access-Control-Allow-Origin']).toBe('*');
+      expect(response.headers!['Access-Control-Allow-Origin']).toBe('*');
     });
   });
 });

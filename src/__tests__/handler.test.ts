@@ -1,12 +1,11 @@
-import { handler } from '../../handler';
+import { handler } from '@/handler';
 import { APIGatewayProxyEvent, Context } from 'aws-lambda';
-import postgresConnection from '../../database/postgres';
-import dynamodbConnection from '../../database/dynamodb';
-import logger from '../../logger';
+import postgresConnection from '@database/postgres';
+import dynamodbConnection from '@database/dynamodb';
 
-jest.mock('../../database/postgres');
-jest.mock('../../database/dynamodb');
-jest.mock('../../logger');
+jest.mock('@database/postgres');
+jest.mock('@database/dynamodb');
+jest.mock('@logger');
 
 describe('Lambda Handler', () => {
   const mockEvent: APIGatewayProxyEvent = {
@@ -23,15 +22,16 @@ describe('Lambda Handler', () => {
     multiValueHeaders: {},
     isBase64Encoded: false,
     resource: '',
+    requestContext: {} as any,
+    stageVariables: null,
   };
 
   const mockContext: Context = {
-    requestId: 'test-request-id',
+    awsRequestId: 'test-request-id',
     functionName: 'test-function',
     functionVersion: '$LATEST',
     invokedFunctionArn: 'arn:aws:lambda:us-east-1:123456789012:function:test',
     memoryLimitInMB: '128',
-    awsRequestId: 'test-request-id',
     logGroupName: '/aws/lambda/test',
     logStreamName: 'test-stream',
     identity: undefined,
@@ -39,7 +39,7 @@ describe('Lambda Handler', () => {
     done: () => {},
     fail: () => {},
     succeed: () => {},
-  };
+  } as any;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -72,9 +72,10 @@ describe('Lambda Handler', () => {
 
     const response = await handler(invalidEvent, mockContext);
 
-    expect(response.statusCode).toBe(200); // Handler catches the error
+    expect(response.statusCode).toBe(400); // Validation error returns 400
     const body = JSON.parse(response.body);
-    expect(body.success).toBe(true); // Changed because validation is optional in handler
+    expect(body.success).toBe(false);
+    expect(body.error.code).toBe('VALIDATION_ERROR');
   });
 
   it('should return error response when database fails', async () => {
@@ -123,7 +124,7 @@ describe('Lambda Handler', () => {
 
     const response = await handler(mockEvent, mockContext);
 
-    expect(response.headers['Access-Control-Allow-Origin']).toBe('*');
-    expect(response.headers['Content-Type']).toBe('application/json');
+    expect(response.headers!['Access-Control-Allow-Origin']).toBe('*');
+    expect(response.headers!['Content-Type']).toBe('application/json');
   });
 });
