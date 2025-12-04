@@ -1,5 +1,4 @@
-import logger from '../../logger';
-import { CustomError, ValidationError, DatabaseError } from '../../errors';
+import { CustomError, ValidationError, DatabaseError } from '@errors';
 
 describe('Errors', () => {
   describe('CustomError', () => {

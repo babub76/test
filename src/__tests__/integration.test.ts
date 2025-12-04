@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, Context } from 'aws-lambda';
-import { handler } from '../../handler';
+import { handler } from '@/handler';
 
 /**
  * Integration tests - these test the full flow with mocked AWS services
@@ -25,13 +25,14 @@ describe('Lambda Handler Integration Tests', () => {
       multiValueHeaders: {},
       isBase64Encoded: false,
       resource: '',
+      requestContext: {} as any,
+      stageVariables: null,
       ...overrides,
     };
   };
 
   const createMockContext = (overrides: Partial<Context> = {}): Context => {
     return {
-      requestId: 'mock-request-id',
       functionName: 'lambda-template',
       functionVersion: '$LATEST',
       invokedFunctionArn: 'arn:aws:lambda:us-east-1:123456789012:function:lambda-template',
@@ -45,7 +46,7 @@ describe('Lambda Handler Integration Tests', () => {
       fail: () => {},
       succeed: () => {},
       ...overrides,
-    };
+    } as any;
   };
 
   describe('POST endpoint', () => {

@@ -1,6 +1,6 @@
 import { Pool, PoolClient } from 'pg';
-import logger from './logger';
-import { DatabaseError } from './errors';
+import logger from '@logger';
+import { DatabaseError } from '@errors';
 
 class PostgresConnection {
   private pool: Pool | null = null;

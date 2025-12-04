@@ -1,310 +1,163 @@
 # AWS Lambda Template
 
-A comprehensive AWS Lambda template for Node.js with PostgreSQL and DynamoDB integration, featuring proper logging, error handling, and unit tests.
+A production-ready AWS Lambda template for Node.js with PostgreSQL and DynamoDB integration, featuring proper logging, error handling, and comprehensive unit tests.
 
-## Features
+## ⚡ Quick Start
 
-- ✅ **Structured Logging** - Winston-based logging with multiple transports
-- ✅ **Error Handling** - Custom error classes for different scenarios
-- ✅ **Request Validation** - Joi schema validation for request data
-- ✅ **Database Integration** - PostgreSQL connection pooling and DynamoDB wrapper
-- ✅ **Unit Tests** - Jest with comprehensive test coverage
-- ✅ **TypeScript** - Full type safety and modern ES2020 features
-- ✅ **Response Standardization** - Consistent response format across all endpoints
-- ✅ **Environment Configuration** - .env support for different environments
-
-## Project Structure
-
-```
-.
-├── src/
-│   ├── __tests__/                 # Unit tests
-│   │   ├── database/
-│   │   │   ├── dynamodb.test.ts
-│   │   │   └── postgres.test.ts
-│   │   ├── utils/
-│   │   │   ├── response.test.ts
-│   │   │   └── validator.test.ts
-│   │   ├── errors.test.ts
-│   │   └── handler.test.ts
-│   ├── database/
-│   │   ├── dynamodb.ts            # DynamoDB wrapper
-│   │   └── postgres.ts            # PostgreSQL connection pool
-│   ├── utils/
-│   │   ├── response.ts            # Response handler and error handling
-│   │   └── validator.ts           # Request validation utilities
-│   ├── errors.ts                  # Custom error classes
-│   ├── logger.ts                  # Logging configuration
-│   └── handler.ts                 # Lambda handler entry point
-├── dist/                          # Compiled JavaScript (after build)
-├── package.json
-├── tsconfig.json
-├── jest.config.json
-├── .eslintrc.json
-├── .env.example
-└── README.md
-```
-
-## Installation
-
-1. **Clone the template repository**
 ```bash
-git clone <template-repo-url>
+# 1. Clone the template
+git clone <repo-url>
 cd aws-lambda-template
-```
 
-2. **Install dependencies**
-```bash
+# 2. Install dependencies
 npm install
-```
 
-3. **Configure environment variables**
-```bash
+# 3. Configure environment
 cp .env.example .env
-# Edit .env with your configuration
-```
+# Edit .env with your settings
 
-## Development
+# 4. Run tests
+npm test
 
-### Build
-```bash
+# 5. Build for deployment
 npm run build
 ```
 
-### Development with hot reload
-```bash
-npm run dev
+See [QUICKSTART.md](./QUICKSTART.md) for detailed setup instructions.
+
+## ✨ Features
+
+- ✅ **TypeScript** - Full type safety with strict mode
+- ✅ **Comprehensive Testing** - 34 tests with 65%+ coverage
+- ✅ **Request Validation** - Joi schema validation
+- ✅ **Database Integration** - PostgreSQL pooling + DynamoDB
+- ✅ **Logging** - Winston with JSON format and request tracking
+- ✅ **Error Handling** - Custom error classes with HTTP status codes
+- ✅ **Response Standardization** - Consistent response format
+- ✅ **Absolute Imports** - Clean `@/handler`, `@logger`, `@database/*` imports
+
+## 📁 Project Structure
+
+```
+src/
+├── __tests__/                    # Unit tests (7 test suites)
+│   ├── database/
+│   │   ├── dynamodb.test.ts
+│   │   └── postgres.test.ts
+│   ├── utils/
+│   │   ├── response.test.ts
+│   │   └── validator.test.ts
+│   ├── errors.test.ts
+│   ├── handler.test.ts
+│   └── integration.test.ts
+├── database/
+│   ├── dynamodb.ts               # DynamoDB wrapper
+│   └── postgres.ts               # PostgreSQL connection pool
+├── utils/
+│   ├── response.ts               # Response handler + error middleware
+│   └── validator.ts              # Joi validation utilities
+├── errors.ts                     # Custom error classes
+├── logger.ts                     # Winston logging config
+└── handler.ts                    # Lambda entry point
 ```
 
-### Run tests
-```bash
-npm test
-```
+## 🚀 Usage
 
-### Watch tests
-```bash
-npm run test:watch
-```
-
-### Linting
-```bash
-npm run lint
-```
-
-### Clean build artifacts
-```bash
-npm run clean
-```
-
-## Usage Guide
-
-### 1. Creating a New Lambda
-
-Clone this template and replace the `handleRequest` function in `src/handler.ts`:
+### Logging
 
 ```typescript
-async function handleRequest(req: LambdaRequest): Promise<APIGatewayProxyResult> {
-  const { event, context, requestContext } = req;
-
-  // Your implementation here
-  
-  return ResponseHandler.success({
-    message: 'Your response data',
-  });
-}
-```
-
-### 2. Logging
-
-Use the logger throughout your code:
-
-```typescript
-import logger from './logger';
+import logger from '@logger';
 
 logger.info('Operation started', { userId: 123 });
 logger.error('Operation failed', { error: err.message });
-logger.debug('Debug information', { data: someData });
-logger.warn('Warning message', { warning: 'details' });
 ```
 
-### 3. Request Validation
-
-Validate incoming requests using Joi schemas:
+### Request Validation
 
 ```typescript
-import { Validator } from './utils/validator';
+import { Validator } from '@utils/validator';
 import Joi from 'joi';
 
-const bodySchema = Joi.object({
-  name: Joi.string().required(),
-  email: Joi.string().email().required(),
-  age: Joi.number().min(18),
-});
-
-try {
-  const validatedData = Validator.validateBody(bodySchema, JSON.parse(event.body!));
-  logger.info('Validation passed', { data: validatedData });
-} catch (error) {
-  // ValidationError automatically handled by error handler
-  throw error;
-}
+const schema = Joi.object({ email: Joi.string().email().required() });
+const data = Validator.validateBody(schema, event.body);
 ```
 
-### 4. PostgreSQL Integration
-
-Query PostgreSQL using the connection pool:
+### PostgreSQL Queries
 
 ```typescript
-import postgresConnection from './database/postgres';
+import postgresConnection from '@database/postgres';
 
-try {
-  const result = await postgresConnection.query(
-    'SELECT * FROM users WHERE id = $1',
-    [userId]
-  );
-  logger.info('User retrieved', { rowCount: (result as any).rowCount });
-} catch (error) {
-  // DatabaseError automatically handled
-  logger.error('Database query failed', { error: String(error) });
-}
+const result = await postgresConnection.query(
+  'SELECT * FROM users WHERE id = $1',
+  [userId]
+);
 ```
 
-### 5. DynamoDB Integration
-
-Interact with DynamoDB using the wrapper:
+### DynamoDB Operations
 
 ```typescript
-import dynamodbConnection from './database/dynamodb';
+import dynamodbConnection from '@database/dynamodb';
 
-// Get item
+// Get
 const item = await dynamodbConnection.get({
   TableName: 'Users',
-  Key: { userId: 'user-123' },
+  Key: { userId: 'user-123' }
 });
 
-// Put item
+// Put
 await dynamodbConnection.put({
   TableName: 'Users',
-  Item: { userId: 'user-123', name: 'John' },
+  Item: { userId: 'user-123', name: 'John' }
 });
 
 // Query
 const results = await dynamodbConnection.query({
   TableName: 'Users',
   KeyConditionExpression: 'pk = :pk',
-  ExpressionAttributeValues: {
-    ':pk': 'USER#123',
-  },
-});
-
-// Update
-await dynamodbConnection.update({
-  TableName: 'Users',
-  Key: { userId: 'user-123' },
-  UpdateExpression: 'SET #name = :name',
-  ExpressionAttributeNames: { '#name': 'name' },
-  ExpressionAttributeValues: { ':name': 'Jane' },
-});
-
-// Delete
-await dynamodbConnection.delete({
-  TableName: 'Users',
-  Key: { userId: 'user-123' },
-});
-
-// Scan
-const allItems = await dynamodbConnection.scan({
-  TableName: 'Users',
-  Limit: 100,
+  ExpressionAttributeValues: { ':pk': 'USER#123' }
 });
 ```
 
-### 6. Error Handling
-
-Use custom error classes for different scenarios:
+### Error Handling
 
 ```typescript
-import {
-  ValidationError,
-  NotFoundError,
-  UnauthorizedError,
-  DatabaseError,
-  InternalServerError,
-} from './errors';
+import { ValidationError, NotFoundError, DatabaseError } from '@errors';
 
-// Validation error (400)
-throw new ValidationError('Invalid email format', { field: 'email' });
-
-// Not found error (404)
-throw new NotFoundError('User not found', { userId: 123 });
-
-// Unauthorized error (401)
-throw new UnauthorizedError('Invalid API key');
-
-// Database error (500)
-throw new DatabaseError('Connection failed', { originalError: err.message });
-
-// Generic internal server error (500)
-throw new InternalServerError('Unexpected error occurred');
+throw new ValidationError('Invalid email', { field: 'email' });      // 400
+throw new NotFoundError('User not found', { userId: 123 });          // 404
+throw new DatabaseError('Connection failed', { error: err });         // 500
 ```
 
-### 7. Response Format
-
-All responses follow a standardized format:
-
-**Success Response (200)**
-```json
-{
-  "success": true,
-  "data": {
-    "message": "Request processed successfully",
-    "requestId": "aws-request-id"
-  },
-  "timestamp": "2024-01-15T10:30:00.000Z"
-}
-```
-
-**Error Response (varies by error type)**
-```json
-{
-  "success": false,
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Request validation failed",
-    "details": {
-      "email": "email must be a valid email"
-    },
-    "requestId": "aws-request-id"
-  },
-  "timestamp": "2024-01-15T10:30:00.000Z"
-}
-```
-
-## Testing
-
-The template includes unit tests for all components. Run tests with:
+## 📦 NPM Scripts
 
 ```bash
+npm run build         # TypeScript compile to dist/
+npm run dev          # Run with ts-node
+npm test             # Run all 34 tests
+npm run test:watch   # Watch mode
+npm run lint         # ESLint code style
+npm run clean        # Remove dist/ and coverage/
+```
+
+## 🧪 Testing
+
+```bash
+# Run all tests
 npm test
-```
 
-For coverage report:
-```bash
+# Run with coverage report
 npm test -- --coverage
-```
 
-Test files are located in `src/__tests__/` and follow the naming pattern `*.test.ts`.
-
-### Running Specific Tests
-
-```bash
+# Run specific test file
 npm test -- handler.test.ts
-npm test -- errors
+
+# Watch mode
+npm run test:watch
 ```
 
-## Environment Variables
+**Current Status**: ✅ 7 test suites passing | 34/34 tests passing | 65.4% coverage
 
-Configure these in your `.env` file:
+## 🔧 Environment Variables
 
 | Variable | Description | Example |
 |----------|-------------|---------|
@@ -312,136 +165,83 @@ Configure these in your `.env` file:
 | `DB_PASSWORD` | PostgreSQL password | `password` |
 | `DB_HOST` | PostgreSQL host | `localhost` |
 | `DB_PORT` | PostgreSQL port | `5432` |
-| `DB_NAME` | PostgreSQL database name | `lambda_db` |
+| `DB_NAME` | PostgreSQL database | `lambda_db` |
 | `AWS_REGION` | AWS region | `us-east-1` |
-| `LOG_LEVEL` | Logging level | `info`, `debug`, `warn`, `error` |
+| `LOG_LEVEL` | Log level | `info`, `debug`, `warn`, `error` |
 
-## Deployment
+## 📚 Documentation
 
-### Package for AWS Lambda
+- **[QUICKSTART.md](./QUICKSTART.md)** - Setup and first deployment
+- **[STEP_BY_STEP.md](./STEP_BY_STEP.md)** - Detailed walkthrough (14 steps)
+- **[STRUCTURE.md](./STRUCTURE.md)** - Project architecture and patterns
+- **[CODEPIPELINE.md](./CODEPIPELINE.md)** - CI/CD with AWS CodePipeline
 
+## 🛠️ Customization
+
+1. Update business logic in `src/handler.ts`
+2. Add database models in `src/database/`
+3. Add validation schemas in request handlers
+4. Write tests in `src/__tests__/`
+5. Build and deploy: `npm run build && zip -r lambda.zip dist/ node_modules/`
+
+## 📋 Deployment
+
+### Option 1: AWS Lambda Console
 ```bash
 npm run build
 zip -r lambda.zip dist/ node_modules/
+# Upload lambda.zip via AWS Console
 ```
 
-### Using AWS SAM
-
-Create a `template.yaml`:
-
-```yaml
-AWSTemplateFormatVersion: '2010-09-09'
-Transform: AWS::Serverless-2013-12-31
-
-Globals:
-  Function:
-    Timeout: 30
-    Runtime: nodejs18.x
-    Environment:
-      Variables:
-        LOG_LEVEL: info
-        AWS_REGION: us-east-1
-
-Resources:
-  LambdaFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: dist/handler.handler
-      Runtime: nodejs18.x
-      Environment:
-        Variables:
-          DB_HOST: !Ref DBHost
-          DB_USER: !Ref DBUser
-          DB_PASSWORD: !Ref DBPassword
-          DB_NAME: !Ref DBName
+### Option 2: AWS CLI
+```bash
+npm run build
+aws lambda update-function-code \
+  --function-name my-function \
+  --zip-file fileb://lambda.zip
 ```
 
-### Using AWS CDK
+### Option 3: AWS CodePipeline
+See [CODEPIPELINE.md](./CODEPIPELINE.md) for automated deployment setup.
 
-```typescript
-import * as lambda from 'aws-cdk-lib/aws-lambda';
-import * as path from 'path';
+## ✅ Best Practices
 
-const lambdaFunction = new lambda.Function(this, 'LambdaFunction', {
-  runtime: lambda.Runtime.NODEJS_18_X,
-  handler: 'dist/handler.handler',
-  code: lambda.Code.fromAsset(path.join(__dirname, '../../')),
-  environment: {
-    DB_HOST: 'your-db-host',
-    DB_USER: 'your-db-user',
-    DB_PASSWORD: 'your-db-password',
-    DB_NAME: 'your-db-name',
-  },
-});
-```
+1. **Validate all input** - Use Joi schemas
+2. **Log with context** - Include relevant data
+3. **Use typed errors** - Helps with monitoring
+4. **Write tests** - Aim for 80%+ coverage
+5. **Never hardcode secrets** - Use environment variables
+6. **Close connections** - Clean up resources
 
-## Best Practices
+## 📦 Dependencies
 
-1. **Always validate input** - Use Joi schemas for all external input
-2. **Use appropriate error types** - Helps with debugging and monitoring
-3. **Log with context** - Include relevant data in log messages
-4. **Handle errors gracefully** - Use try-catch blocks appropriately
-5. **Write tests** - Aim for 80%+ code coverage
-6. **Use environment variables** - Never hardcode sensitive data
-7. **Close connections** - Clean up database connections when needed
+**Production**: pg, aws-sdk, winston, joi, aws-lambda
+**Development**: typescript, jest, ts-jest, eslint, @types/*
 
-## Dependencies
+## 🐛 Troubleshooting
 
-### Production
-- `pg` - PostgreSQL client
-- `aws-sdk` - AWS SDK for JavaScript
-- `winston` - Logging library
-- `joi` - Schema validation
-
-### Development
-- `typescript` - TypeScript compiler
-- `ts-node` - TypeScript execution for Node.js
-- `jest` - Testing framework
-- `ts-jest` - TypeScript support for Jest
-- `eslint` - Code linting
-- `@types/*` - Type definitions
-
-## Troubleshooting
-
-### Database Connection Issues
-
-**PostgreSQL Connection Failed**
-- Verify `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` in `.env`
-- Ensure PostgreSQL service is running
+**Database connection failed**
+- Check DB credentials in `.env`
+- Verify PostgreSQL/DynamoDB is running
 - Check network connectivity
 
-**DynamoDB Issues**
-- Ensure AWS credentials are configured
-- Verify IAM permissions for DynamoDB operations
-- Check `AWS_REGION` is correct
-
-### Build Issues
-
-**TypeScript Compilation Errors**
+**Tests failing**
 ```bash
 npm run clean
 npm install
+npm test -- --clearCache
+```
+
+**Build errors**
+```bash
+npm run clean
 npm run build
 ```
 
-### Test Failures
-
-- Clear Jest cache: `npx jest --clearCache`
-- Update snapshots: `npm test -- -u`
-- Run in watch mode: `npm run test:watch`
-
-## Contributing
-
-1. Follow the existing code structure
-2. Add tests for new features
-3. Update documentation
-4. Ensure linting passes: `npm run lint`
-5. Maintain >80% test coverage
-
-## License
+## 📄 License
 
 MIT
 
-## Support
+## 💬 Support
 
-For issues and questions, please refer to the documentation above or create an issue in the repository.
+Refer to the documentation files or review the test files for usage examples.

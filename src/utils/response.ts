@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
-import logger from './logger';
-import { CustomError, InternalServerError, ValidationError } from './errors';
+import logger from '@logger';
+import { CustomError } from '@errors';
 
 interface RequestContext {
   requestId: string;
@@ -80,7 +80,7 @@ export async function withErrorHandling(
   context: Context
 ): Promise<APIGatewayProxyResult> {
   const requestContext: RequestContext = {
-    requestId: context.requestId,
+    requestId: context.awsRequestId,
     functionName: context.functionName,
     timestamp: new Date().toISOString(),
   };

@@ -1,6 +1,5 @@
-import postgresConnection from '../../database/postgres';
-import { DatabaseError } from '../../errors';
-import { Pool, PoolClient } from 'pg';
+import postgresConnection from '@database/postgres';
+import { Pool } from 'pg';
 
 jest.mock('pg');
 
