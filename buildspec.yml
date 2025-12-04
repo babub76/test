@@ -1,0 +1,34 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo "Installing dependencies..."
+      - npm install
+      - echo "Running linting..."
+      - npm run lint
+
+  build:
+    commands:
+      - echo "Building application..."
+      - npm run build
+      - echo "Running tests..."
+      - npm test -- --coverage
+
+  post_build:
+    commands:
+      - echo "Creating deployment package..."
+      - mkdir -p build
+      - cp -r dist/* build/
+      - cp -r node_modules build/
+      - cd build && zip -r ../lambda-package.zip . && cd ..
+      - echo "Build complete"
+
+artifacts:
+  files:
+    - lambda-package.zip
+  discard-paths: yes
+
+cache:
+  paths:
+    - 'node_modules/**/*'
