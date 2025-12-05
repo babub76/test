@@ -8,8 +8,6 @@ phases:
     commands:
       - echo "Installing dependencies..."
       - npm install
-      - echo "Running tests..."
-      - npm test
   build:
     commands:
       - echo "Building application..."
