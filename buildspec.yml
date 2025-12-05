@@ -8,11 +8,14 @@ phases:
     commands:
       - echo "Installing dependencies..."
       - npm install
+      - echo "Running tests..."
+      - npm test
   build:
     commands:
-
       - echo "Building application..."
       - npm run build
+      - echo "Verifying build artifacts..."
+      - ls -la dist/
     env:
       variables:
         NODE_OPTIONS: "--max-old-space-size=2048"
@@ -22,10 +25,12 @@ phases:
 
 artifacts:
   files:
-    - dist/**/*
-    - node_modules/**/*
+    - 'dist/**/*'
+    - 'package.json'
+    - 'package-lock.json'
+  discard-paths: yes
   name: BuildArtifact
 
 cache:
   paths:
-    - node_modules/**/*
+    - 'node_modules/**/*'
