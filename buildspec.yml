@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+  pre_build:
+    commands:
+      - echo "Installing dependencies..."
+      - npm install
+  build:
+    commands:
+      - echo "Running tests..."
+      - npm test
+      - echo "Building application..."
+      - npm run build
+  post_build:
+    commands:
+      - echo "Build completed successfully"
+
+artifacts:
+  files:
+    - dist/**/*
+    - node_modules/**/*
+  name: BuildArtifact
+
+cache:
+  paths:
+    - node_modules/**/*
