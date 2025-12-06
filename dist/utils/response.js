@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ResponseHandler = void 0;
 exports.withErrorHandling = withErrorHandling;
-const _logger_1 = __importDefault(require("@logger"));
-const _errors_1 = require("@errors");
+const logger_1 = __importDefault(require("../logger"));
+const errors_1 = require("../errors");
 class ResponseHandler {
     static success(data, statusCode = 200) {
         return {
@@ -27,7 +27,7 @@ class ResponseHandler {
         let errorCode = 'INTERNAL_SERVER_ERROR';
         let message = 'An unexpected error occurred';
         let details;
-        if (error instanceof _errors_1.CustomError) {
+        if (error instanceof errors_1.CustomError) {
             statusCode = error.statusCode;
             errorCode = error.errorCode;
             message = error.message;
@@ -36,7 +36,7 @@ class ResponseHandler {
         else {
             message = error.message || 'An unexpected error occurred';
         }
-        _logger_1.default.error('Lambda error response', {
+        logger_1.default.error('Lambda error response', {
             requestId,
             statusCode,
             errorCode,
@@ -70,7 +70,7 @@ async function withErrorHandling(handler, event, context) {
         timestamp: new Date().toISOString(),
     };
     try {
-        _logger_1.default.info('Lambda invoked', {
+        logger_1.default.info('Lambda invoked', {
             requestId: requestContext.requestId,
             method: event.httpMethod,
             path: event.path,
@@ -80,7 +80,7 @@ async function withErrorHandling(handler, event, context) {
             context,
             requestContext,
         });
-        _logger_1.default.info('Lambda execution completed successfully', {
+        logger_1.default.info('Lambda execution completed successfully', {
             requestId: requestContext.requestId,
             statusCode: result.statusCode,
         });

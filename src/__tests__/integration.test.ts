@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, Context } from 'aws-lambda';
-import { handler } from '@/handler';
+import { handler } from '../handler';
 
 /**
  * Integration tests - these test the full flow with mocked AWS services

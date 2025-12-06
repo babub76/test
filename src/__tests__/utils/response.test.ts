@@ -1,5 +1,5 @@
-import { ResponseHandler } from '@utils/response';
-import { ValidationError } from '@errors';
+import { ResponseHandler } from '../../utils/response';
+import { ValidationError } from '../../errors';
 
 describe('ResponseHandler', () => {
   describe('success', () => {

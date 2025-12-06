@@ -1,10 +1,10 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
-import logger from '@logger';
-import { withErrorHandling, ResponseHandler, LambdaRequest } from '@utils/response';
-import { Validator } from '@utils/validator';
+import logger from './logger';
+import { withErrorHandling, ResponseHandler, LambdaRequest } from './utils/response';
+import { Validator } from './utils/validator';
 import Joi from 'joi';
-import postgresConnection from '@database/postgres';
-import dynamodbConnection from '@database/dynamodb';
+import postgresConnection from './database/postgres';
+import dynamodbConnection from './database/dynamodb';
 
 // Example handler implementation
 async function handleRequest(req: LambdaRequest): Promise<APIGatewayProxyResult> {

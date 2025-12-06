@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
-import logger from '@logger';
-import { DatabaseError } from '@errors';
+import logger from '../logger';
+import { DatabaseError } from '../errors';
 
 const dynamodb = new AWS.DynamoDB.DocumentClient({
   region: process.env.AWS_REGION || 'us-east-1'
