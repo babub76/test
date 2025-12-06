@@ -21,14 +21,10 @@ phases:
 artifacts:
   files:
     - dist/**/*
+    - node_modules/**/*
+    - package.json
+    - package-lock.json
   name: BuildArtifact
-  
-secondary-artifacts:
-  PackageFiles:
-    files:
-      - package.json
-      - package-lock.json
-    name: PackageArtifact
 
 cache:
   paths:
