@@ -4,12 +4,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
-const _logger_1 = __importDefault(require("@logger"));
-const response_1 = require("@utils/response");
-const validator_1 = require("@utils/validator");
+const logger_1 = __importDefault(require("./logger"));
+const response_1 = require("./utils/response");
+const validator_1 = require("./utils/validator");
 const joi_1 = __importDefault(require("joi"));
-const postgres_1 = __importDefault(require("@database/postgres"));
-const dynamodb_1 = __importDefault(require("@database/dynamodb"));
+const postgres_1 = __importDefault(require("./database/postgres"));
+const dynamodb_1 = __importDefault(require("./database/dynamodb"));
 // Example handler implementation
 async function handleRequest(req) {
     const { event, requestContext } = req;
@@ -20,7 +20,7 @@ async function handleRequest(req) {
             email: joi_1.default.string().email().required(),
         });
         const validatedBody = validator_1.Validator.validateBody(bodySchema, JSON.parse(event.body));
-        _logger_1.default.info('Request body validated', { validatedBody });
+        logger_1.default.info('Request body validated', { validatedBody });
     }
     // Example: Query DynamoDB
     try {
@@ -31,23 +31,23 @@ async function handleRequest(req) {
                 ':pk': 'example-key',
             },
         });
-        _logger_1.default.info('DynamoDB query result', {
+        logger_1.default.info('DynamoDB query result', {
             itemCount: dynamoResult.Items?.length,
         });
     }
     catch (error) {
-        _logger_1.default.warn('DynamoDB query failed', { error: String(error) });
+        logger_1.default.warn('DynamoDB query failed', { error: String(error) });
         // Handle gracefully or rethrow
     }
     // Example: Query PostgreSQL
     try {
         const pgResult = await postgres_1.default.query('SELECT * FROM users LIMIT 10');
-        _logger_1.default.info('PostgreSQL query executed', {
+        logger_1.default.info('PostgreSQL query executed', {
             rowCount: pgResult.rowCount,
         });
     }
     catch (error) {
-        _logger_1.default.warn('PostgreSQL query failed', { error: String(error) });
+        logger_1.default.warn('PostgreSQL query failed', { error: String(error) });
         // Handle gracefully or rethrow
     }
     return response_1.ResponseHandler.success({

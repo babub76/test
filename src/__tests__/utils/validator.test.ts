@@ -1,4 +1,4 @@
-import { Validator } from '@utils/validator';
+import { Validator } from '../../utils/validator';
 import Joi from 'joi';
 
 describe('Validator', () => {

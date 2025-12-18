@@ -1,4 +1,4 @@
-import postgresConnection from '@database/postgres';
+import postgresConnection from '../../database/postgres';
 import { Pool } from 'pg';
 
 jest.mock('pg');

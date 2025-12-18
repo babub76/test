@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
-import { CustomError } from '@errors';
+import { CustomError } from '../errors';
 interface RequestContext {
     requestId: string;
     functionName: string;

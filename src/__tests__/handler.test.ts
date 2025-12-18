@@ -1,11 +1,11 @@
-import { handler } from '@/handler';
+import { handler } from '../handler';
 import { APIGatewayProxyEvent, Context } from 'aws-lambda';
-import postgresConnection from '@database/postgres';
-import dynamodbConnection from '@database/dynamodb';
+import postgresConnection from '../database/postgres';
+import dynamodbConnection from '../database/dynamodb';
 
-jest.mock('@database/postgres');
-jest.mock('@database/dynamodb');
-jest.mock('@logger');
+jest.mock('../database/postgres');
+jest.mock('../database/dynamodb');
+jest.mock('../logger');
 
 describe('Lambda Handler', () => {
   const mockEvent: APIGatewayProxyEvent = {
